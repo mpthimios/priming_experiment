@@ -1,0 +1,136 @@
+<script>
+
+function fetch_imdb_info_for_tobe_rated(){
+	$(".movies_tobe_rated" ).each(function( index ) {
+		console.log(this.id);
+		var imdb_id = this.id;
+		$.ajax({
+		  dataType: "json",
+		  url: "http://www.omdbapi.com/",
+		  data: {i: imdb_id, plot: "json", r: "json"},
+		  success: function(data){
+		  		var element = "#"+data.imdbID;
+				$(element).find("#for_rating_title").html("Title: " + data.Title);
+				$(element).find("#for_rating_plot").html("Plot: " + data.Plot);
+				$(element).find("#for_rating_actors").html("Actors: " + data.Actors);				
+				$(element).find("#tobe_rated").attr("thumb", data.Poster);				
+				$(element).find("#tobe_rated").prepend('<img id="theImg" src="'+ data.Poster +'" style="width:120px;"/>');
+			}
+		});
+	});	
+}
+
+$( document ).ready(function() {
+
+	$('#ratings_form').on('valid.bs.validator', function (e) {     		 		
+	  console.log($(e.relatedTarget).attr("name"));
+	});
+
+   	var jsonObj  = [];
+   	var missing_answer = false;
+    fetch_imdb_info_for_tobe_rated();
+
+    $(".stars").each(function(index){
+    	$(this).rating('create',{limit:7});	
+    });
+
+    $("#movies_button").click(function() {    	
+    	var url = '<%= preferences_path%>';
+    	jsonObj = [];
+    	missing_answer = false;
+		var form = $('<form action="' + url + '" method="post">' + '</form>');
+		var input = $("<input>")
+                .attr("type", "hidden")
+                .attr("name", "authenticity_token").val("<%= form_authenticity_token() %>");
+        $(form).append($(input));      
+    	$(".movies_tobe_rated" ).each(function( index ) {
+    		var imdb_id = this.id;
+    		var element = "#"+imdb_id;    		    		
+            item = {}
+	        item [imdb_id] = $(element).find(".stars").attr('data-rating');
+	        jsonObj.push(item);
+	        if (item [imdb_id] == 0){
+	        	missing_answer = true;
+	        }
+    	});
+		console.log(jsonObj);
+		var input = $("<input>")
+               .attr("type", "hidden")
+               .attr("name", "ratings").val(JSON.stringify(jsonObj));
+        $(form).append($(input));
+        if (missing_answer){
+        	$('#myModal').modal('show');
+        }else{
+        	form.submit();		
+        }		
+	});
+	
+});
+
+</script>
+<style>
+#content {
+    background-color: #C8C6C6;
+	color: #000;
+}
+.form-control {
+    color: #000;
+    background-color: #FFF;   
+}
+.container_padding{
+	padding-top: 0px;
+}
+</style>
+
+<%if true%>
+	<div class="alert alert-dismissible alert-success" style="font-size: 20px;">
+		4. Please rate the following movies by considering which one you would like to watch right now.
+	</div>
+	
+	<%@movies.each do |movie|%>
+	<div class="row movies_tobe_rated" style="border-top: 1px solid #000;" id="<%=movie.imdb_id%>">
+	   <div class="col-sm-12" style="margin-top:10px;">
+		<div class="col-sm-12" style="margin-top:10px;">
+			<div class="col-sm-2" style="margin-top:10px;">
+				<div id="tobe_rated" class="tobe_rated" thumb=""></div>
+			</div>
+			<div class="col-sm-10" style="margin-top:10px; font-size:130%; color: black;">
+				<div id="for_rating_title">
+					Title:
+				</div>
+				<p id="for_rating_plot">
+					Plot: 
+				</p>
+				<p id="for_rating_actors">
+					Actors: 
+				</p>
+				<div id="for_rating_rating" class="form-group">
+					Provide a high star rating if you would like to watch it now else a low star rating: <div id="stars-default" class="stars" style="font-size:10px;"><input type=hidden name"rating" required/></div>
+					<div class="help-block with-errors"></div>
+				</div>
+			</div>
+	    </div>		 
+	  </div>	  
+	</div>
+	<%end%>	
+	<div class="row" style="margin-top:10px;">
+	 	<button class="btn btn-primary btn-lg pull-right" id="movies_button" style="width: 100%;">Next</button>
+	</div>
+<%end%>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Please rate all the movies.</h4>
+      </div>
+      <div class="modal-body">
+        We would appreciate if you acn rate all the movies by considering which one you would like to watch right now. Thank you!
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>        
+      </div>
+    </div>
+  </div>
+</div>

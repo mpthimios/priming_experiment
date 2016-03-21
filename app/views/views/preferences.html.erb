@@ -1,0 +1,99 @@
+
+<script>
+var one_true = false;
+$( document ).ready(function() {   
+ 	$("#preferences_button").click(function() {   	 	
+ 		one_true = false;
+ 		$(".checkbox" ).each(function( index, element ) { 	 			
+    		checkbox_value = $(element).find("#checkbox").is(":checked");		        
+    		if (checkbox_value){
+    			one_true = true;
+    		}
+    	});
+    	if (one_true){
+    		console.log("going to submit form");
+    		$("#preferences_form")[0].submit();
+    	}
+    	else{
+    		$('#myModal').modal('show');
+    	}
+	});	
+});
+</script>
+
+<div class="alert alert-dismissible alert-success">
+	5. Please tell us what kind of movies do you like to watch in general? (check all that apply)
+</div>
+
+<div class="jumbotron">
+	<form role="form" id="preferences_form" action="<%=thank_you_path%>" method="post">
+		<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+		<div class="form-group">
+		    <div class="checkbox" style="font-size: 12px;">
+		    	<label style="font-size: 20px;">
+		        	<input type="checkbox" id="checkbox" name="genre[Commedy]" style="transform:scale(1.6, 1.6); margin: 8px 0 0 -16px;" required>
+		        	Commedy
+		    	</label>		      
+		    </div>
+		</div>		  
+		<div class="form-group">
+		    <div class="checkbox" style="font-size: 12px;">
+		    	<label style="font-size: 20px;">
+		        	<input type="checkbox" id="checkbox" name="genre[DramaReality]" style="transform:scale(1.6, 1.6); margin: 8px 0 0 -16px;" required>
+		        	Drama / Reality
+		    	</label>		      
+		    </div>
+		</div>
+		<div class="form-group">
+		    <div class="checkbox" style="font-size: 12px;">
+		    	<label style="font-size: 20px;">
+		        	<input type="checkbox" id="checkbox" name="genre[Mystery]" style="transform:scale(1.6, 1.6); margin: 8px 0 0 -16px;" required>
+		        	Mystery
+		    	</label>		      
+		    </div>
+		</div>
+		<div class="form-group">
+		    <div class="checkbox" style="font-size: 12px;">
+		    	<label style="font-size: 20px;">
+		        	<input type="checkbox" id="checkbox" name="genre[ScienceFiction]" style="transform:scale(1.6, 1.6); margin: 8px 0 0 -16px;" required>
+		        	Science Fiction
+		    	</label>		      
+		    </div>
+		</div>
+		<div class="form-group">
+		    <div class="checkbox" style="font-size: 12px;">
+		    	<label style="font-size: 20px;">
+		        	<input type="checkbox" id="checkbox" name="genre[BiographyDocumentary]" style="transform:scale(1.6, 1.6); margin: 8px 0 0 -16px;" required>
+		        	Biography / Documentary
+		    	</label>		      
+		    </div>
+		</div>
+		<div class="form-group">
+		    <div class="checkbox" style="font-size: 12px;">
+		    	<label style="font-size: 20px;">
+		        	<input type="checkbox" id="checkbox" name="ActionAdventure" style="transform:scale(1.6, 1.6); margin: 8px 0 0 -16px;" required>
+		        	Action / Adventure
+		    	</label>		      
+		    </div>
+		</div>
+	</form>
+</div>
+
+<button id="preferences_button" class="btn btn-primary btn-lg pull-right" style="width: 100%;" href="<%= thank_you_path%>">Finish</button>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Please select at least one genre.</h4>
+      </div>
+      <div class="modal-body">
+        Even if you cannot find the movie genres you like please select at least one that is more close to your preferences. Thank you!
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>        
+      </div>
+    </div>
+  </div>
+</div>

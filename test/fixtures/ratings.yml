@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  movie_id: 
+  story_id: 
+  session_id: MyString
+  rating: 
+  would_watch: 
+
+two:
+  movie_id: 
+  story_id: 
+  session_id: MyString
+  rating: 
+  would_watch: 
