@@ -5,7 +5,18 @@ class ViewsController < ApplicationController
   end
 
   def story
-  	@story=Story.limit(1).order("RAND()").first
+    count = Count.first
+    if count.nil?
+      count = Count.new
+      count.count = 0
+      count.save
+    else
+      count.count = count.count+1
+      count.save
+    end
+    story_id = count.count % 5
+    logger.debug story_id +1 
+  	@story=Story.find_by id: story_id + 1
   	session[:story] = @story.id
   end
 
@@ -48,6 +59,11 @@ class ViewsController < ApplicationController
         new_preference = Preference.new(:session_id => session.id, :preference => key)        
         new_preference.save
       end
+      @mturk_code = (0...8).map { (65 + rand(26)).chr }.join
+      code = Code.new
+      code.session_id = session.id            
+      code.mturk_code = @mturk_code      
+      code.save      
     end
   end
 end

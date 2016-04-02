@@ -10,16 +10,16 @@ $( document ).ready(function() {
 	  if ($(e.relatedTarget).attr("name") == "keywords"){
 	  	story_description_valid = true;
 	  }
-	  if ($(e.relatedTarget).attr("name") == "story_type"){
-	  	story_type_valid = true;
-	  }
+	  // if ($(e.relatedTarget).attr("name") == "story_type"){
+	  // 	story_type_valid = true;
+	  // }
 	  
 	});
 
  $("#movies_button").click(function() { 
   	
  	 		$('#questions_form').validator('validate');
- 	 		if (story_description_valid && story_type_valid){
+ 	 		if (story_description_valid /*&& story_type_valid*/){
 			  	$('#questions_form').submit();
 			  }
 	
@@ -29,7 +29,7 @@ $( document ).ready(function() {
 </script>
 <form role="form" id="questions_form" data-toggle="validator" data-disable="false" action="<%= movies_path%>" method="post">
 	<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-	<div class="alert alert-dismissible alert-success row">
+	<!-- <div class="alert alert-dismissible alert-success row">
 		<label for="story_type_options" class="control-label" style="font-size: 20px;">2. What was the genre of the story you read?</label>
 		<div class="form-group" id="story_type_options" style="font-size: 15px;">
 			<div class="radio">
@@ -64,12 +64,12 @@ $( document ).ready(function() {
 		    </div>
 		    <div class="help-block with-errors"></div>
 		</div>
-	</div>
+	</div> -->
 
 
 
 	<div class="alert alert-dismissible alert-success row form-group">
-		<label for="keywords" class="control-label" style="font-size: 20px;">3. Could describe it with some keywords?</label>
+		<label for="keywords" class="control-label" style="font-size: 20px;">2. Could you describe the story you just read with some keywords?</label>
 		<input type="text" id="keywords" name="keywords" class="form-control" placeholder="Enter some space seperated keywords" aria-describedby="basic-addon1" required>
 		<div class="help-block with-errors"></div>
 	</div>

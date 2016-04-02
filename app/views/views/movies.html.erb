@@ -13,8 +13,9 @@ function fetch_imdb_info_for_tobe_rated(){
 				$(element).find("#for_rating_title").html("Title: " + data.Title);
 				$(element).find("#for_rating_plot").html("Plot: " + data.Plot);
 				$(element).find("#for_rating_actors").html("Actors: " + data.Actors);				
+				$(element).find("#for_rating_genre").html("Genre: " + data.Genre);								
 				$(element).find("#tobe_rated").attr("thumb", data.Poster);				
-				$(element).find("#tobe_rated").prepend('<img id="theImg" src="'+ data.Poster +'" style="width:120px;"/>');
+				$(element).find("#tobe_rated").prepend('<img id="theImg" src="'+ data.imdbID +'.jpg" style="width:120px;"/>');
 			}
 		});
 	});	
@@ -84,7 +85,7 @@ $( document ).ready(function() {
 
 <%if true%>
 	<div class="alert alert-dismissible alert-success" style="font-size: 20px;">
-		4. Please rate the following movies by considering which one you would like to watch right now.
+		4. Please rate the following movies by considering which one you would prefer to watch right now on a scale from 1 to 7 stars.
 	</div>
 	
 	<%@movies.each do |movie|%>
@@ -104,8 +105,11 @@ $( document ).ready(function() {
 				<p id="for_rating_actors">
 					Actors: 
 				</p>
+				<p id="for_rating_genre">
+					Genre: 
+				</p>
 				<div id="for_rating_rating" class="form-group">
-					Provide a high star rating if you would like to watch it now else a low star rating: <div id="stars-default" class="stars" style="font-size:10px;"><input type=hidden name"rating" required/></div>
+					Provide a high star rating if you would prefer to watch this movie now else a low star rating: <div id="stars-default" class="stars" style="font-size:10px;"><input type=hidden name"rating" required/></div>
 					<div class="help-block with-errors"></div>
 				</div>
 			</div>
@@ -126,7 +130,7 @@ $( document ).ready(function() {
         <h4 class="modal-title" id="myModalLabel">Please rate all the movies.</h4>
       </div>
       <div class="modal-body">
-        We would appreciate if you acn rate all the movies by considering which one you would like to watch right now. Thank you!
+        We would appreciate if you can rate all the movies by considering which one you would prefer to watch right now. Thank you!
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>        
