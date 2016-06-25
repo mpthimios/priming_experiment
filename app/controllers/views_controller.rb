@@ -31,8 +31,9 @@ class ViewsController < ApplicationController
   end
 
   def movies
-    if !params[:preferences].nil?
+    if !params[:preferences].nil? && !params[:original_genre_list].nil?
       session[:preferences] = params[:preferences]
+      session[:original_genre_list] = params[:original_genre_list]
     end
     @movies=Movie.order('rand()')
     if request.post?
@@ -43,8 +44,9 @@ class ViewsController < ApplicationController
   end
 
   def preferences
-    if !params[:ratings].nil?
+    if !params[:ratings].nil? && !params[:movie_preferences].nil?
       session[:ratings] = params[:ratings]
+      session[:movie_preferences] = params[:movie_preferences]
     end
     if request.post?
       @action_id = 2      
@@ -54,25 +56,33 @@ class ViewsController < ApplicationController
   end
 
   def thank_you  	
-  	if (!params[:ratings].nil? && !session[:preferences].nil?) 
+  	if (!params[:ratings].nil? && !params[:movie_preferences].nil? && !session[:preferences].nil? && !session[:original_genre_list].nil?) 
       logger.debug "coming from movies"
       logger.debug params[:ratings]
       logger.debug session[:preferences]
       process_ratings(params)
       process_preferences(session)
+      process_movie_preferences(params)
+      original_genre_list(session)
       @mturk_code = generate_mturk_code
-    elsif (!session[:ratings].nil? && !params[:preferences].nil?)
+    elsif (!session[:ratings].nil? && !session[:movie_preferences].nil? && !params[:preferences].nil? && !params[:original_genre_list].nil?)
       logger.debug "preferences"
       logger.debug params[:ratings]
       logger.debug session[:ratings]
+      logger.debug session[:movie_preferences]
+      logger.debug session[:original_genre_list]
       process_ratings(session)
       process_preferences(params)
+      process_movie_preferences(session)
+      original_genre_list(params)
       @mturk_code = generate_mturk_code
     else
       redirect_to index_path
     end    
     session.delete(:preferences)
     session.delete(:ratings)
+    session.delete(:movie_preferences)
+    session.delete(:original_genre_list)    
   end
 
   private
@@ -102,7 +112,19 @@ class ViewsController < ApplicationController
 
   def process_preferences (params)
       preferences = params[:preferences]   
-      new_preferences = Preference.new(:session_id => session.id, :preference => preferences)
+      new_preferences = Preference.new(:session_id => session.id, :preference => preferences, :preference_type => 'genres')
+      new_preferences.save
+  end
+
+  def process_movie_preferences (params)
+      movie_preferences = params[:movie_preferences]   
+      new_preferences = Preference.new(:session_id => session.id, :preference => movie_preferences, :preference_type => 'movies')
+      new_preferences.save
+  end
+
+  def original_genre_list (params)
+      original_genre_list = params[:original_genre_list]   
+      new_preferences = Preference.new(:session_id => session.id, :preference => original_genre_list, :preference_type => 'original_genre_list')
       new_preferences.save
   end
 end

@@ -20,9 +20,24 @@ $( document ).ready(function() {
 
   $('#sortable1').randomize();
 
+  original_list = [];
+  $('#sortable1 li input').each(function( index ) {       
+      if ($(this).attr("value") != ""){
+        original_list.push($(this).attr("value"));
+      }           
+    });
+  console.log(original_list);
+  var input_2 = $("<input>")
+     .attr("type", "hidden")
+     .attr("name", "original_genre_list").val(JSON.stringify(original_list));
+  $("#preferences_form").append($(input_2));
+
   $(".draggable").draggable({
           appendTo: "body",
-          helper: "clone"
+          helper: "clone",
+          start  : function(event, ui){
+              $(ui.helper).addClass("col-md-2");
+          }
       });
       
       $("#sortable2").droppable({
@@ -108,6 +123,9 @@ $( document ).ready(function() {
     margin-bottom:0 !important;
     text-align:center;
     border:1px solid #ccc !important;
+  }
+  .ui-helper {
+      width: 100% !important;
   }
   </style>
 

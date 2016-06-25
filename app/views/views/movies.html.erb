@@ -1,3 +1,4 @@
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <script>
 
 function fetch_imdb_info_for_tobe_rated(){
@@ -16,10 +17,29 @@ function fetch_imdb_info_for_tobe_rated(){
 				$(element).find("#for_rating_genre").html("Genre: " + data.Genre);								
 				$(element).find("#tobe_rated").attr("thumb", data.Poster);				
 				$(element).find("#tobe_rated").prepend('<img id="theImg" src="'+ data.imdbID +'.jpg" style="width:120px;"/>');
+				element = "#list_"+data.imdbID;
+				$(element).attr("value", data.Title);				
+				$(element).html(data.Title);				
 			}
 		});
 	});	
 }
+
+var one_true = false;
+
+$.fn.randomize = function(selector){
+    var $elems = selector ? $(this).find(selector) : $(this).children(),
+        $parents = $elems.parent();
+
+    $parents.each(function(){
+        $(this).children(selector).sort(function(){
+            return Math.round(Math.random()) - 0.5;
+        // }). remove().appendTo(this); // 2014-05-24: Removed `random` but leaving for reference. See notes under 'ANOTHER EDIT'
+        }).detach().appendTo(this);
+    });
+
+    return this;
+};
 
 $( document ).ready(function() {
 
@@ -63,12 +83,64 @@ $( document ).ready(function() {
                .attr("type", "hidden")
                .attr("name", "ratings").val(JSON.stringify(jsonObj));
         $(form).append($(input));
-        if (missing_answer){
+        
+        jsonPreferencesObj = [];
+        all_selected = false;
+ 		if ($('#sortable2 li').length == 6)
+ 		{
+    		all_selected = true;    		
+    	}
+    	if (all_selected){
+    		console.log("going to submit form");
+    		$('#sortable2 li').each(function( index ) {	
+    			if (this.id != ""){
+    				jsonPreferencesObj.push(this.id);
+    			}		        
+	    	});
+	    	console.log(jsonPreferencesObj);
+			var input_2 = $("<input>")
+	               .attr("type", "hidden")
+	               .attr("name", "movie_preferences").val(JSON.stringify(jsonPreferencesObj));
+	        $(form).append($(input_2));
+    	}
+    	
+    	if (missing_answer){
         	$('#myModal').modal('show');
-        }else{
+        }
+        else if (!all_selected){
+        	$('#myModal1').modal('show');
+        }
+        else{
         	form.submit();		
-        }		
+        }
+
 	});
+
+	$('#sortable1').randomize();
+
+	  $(".draggable").draggable({
+	          appendTo: "body",
+	          helper: "clone",
+	          start  : function(event, ui){
+	              $(ui.helper).addClass("col-md-3");
+	          }
+	      });
+	      
+	      $("#sortable2").droppable({
+	            activeClass: "ui-state-default",
+	            hoverClass: "ui-state-hover",
+	            accept: ":not(.ui-sortable-helper)",
+	            drop: function( event, ui ) {
+	                $( this ).find( ".placeholder" ).hide();
+	                $(ui.draggable).clone().appendTo(this);                
+	                $(ui.draggable).remove(); //remove from list
+	            }
+	        }).sortable({
+	            items: "li:not(.placeholder)",
+	            sort: function() {
+	                $( this ).removeClass( "ui-state-default" );
+	            }
+	        });
 	
 });
 
@@ -85,6 +157,59 @@ $( document ).ready(function() {
 .container_padding{
 	padding-top: 0px;
 }
+  .handpointer {
+ 		cursor: hand; 
+ 		cursor: pointer;
+ 	}
+  .left, .right{  
+    width:400px;    
+  } 
+  .list-item{
+    border: 1px solid black;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    background:#fff;    
+    height:40px;
+    line-height:40px;
+    font-size:15px;
+    font-weight:700;
+    list-style-type:none; 
+    background:#eee;
+    padding:5px;
+    cursor:pointer;
+    margin-bottom:5px;
+    position:relative;   
+  } 
+  .list-item span{  
+    padding:0 10px;
+    background:#ee2e24;
+    display:block;    
+    height:40px;
+    line-height:40px;  
+  }
+  .right .list-item{
+    height:40px;
+    line-height:40px;
+    background:#fff;
+    cursor:inherit;    
+  } 
+  .right .list-item span{
+    background:#fff;
+    color:#ee2e24;    
+    height:40px;
+    line-height:60px;    
+  }
+  .placeholder{
+    background:none;
+    color:#888;
+    cursor:default;
+    margin-bottom:0 !important;
+    text-align:center;
+    border:1px solid #ccc !important;
+  }
+  .ui-helper {
+      width: 100% !important;
+  }
 </style>
 
 <%if true%>
@@ -121,6 +246,30 @@ $( document ).ready(function() {
 	  </div>	  
 	</div>
 	<%end%>	
+	
+		<div class="alert alert-dismissible alert-success" style="font-size: 20px;">
+			 Please rank the movies based on your preferences.
+		</div>
+		
+		<p class="col-md-10">( Drag movies from the <strong>list of Movies</strong> to the <strong>Preferences</strong>. )</p>
+		<div class="row movies_tobe_ranked">
+		<div style="border=1px solid; display: inline-block" class="col-md-2">
+		</div>
+	  <div class="col-md-6 left">
+      <div class="list-group-item active">Movies</div>
+			<ul id="sortable1" class="list-group">				
+			  	<%@movies.each do |movie|%>
+			  		<li class="ui-state-default list-item handpointer draggable" id="list_<%=movie.imdb_id%>">Comedy<input type='hidden' name='movie_preferences[]' value=''/></li>
+			  	<%end%>			  	
+			</ul>
+		</div>
+		<div style="border=1px solid; display: inline-block; height:270px;" class="col-md-6 right">
+      <div class="list-group-item active">Your preferences</div>
+			<ul id="sortable2" class="list-group">			  
+        	<li class="list-item placeholder">(drag here in your prefered order)</li>
+			</ul>
+		</div>
+	</div>
 	<div class="row" style="margin-top:10px;">
 		<button class="btn btn-primary btn-lg pull-right" id="movies_button" style="width: 100%;">Next</button>		
 	</div>
@@ -134,7 +283,24 @@ $( document ).ready(function() {
         <h4 class="modal-title" id="myModalLabel">Please rate all the movies.</h4>
       </div>
       <div class="modal-body">
-        We would appreciate if you can rate all the movies by considering which one you would prefer to watch right now. Thank you!
+        We would appreciate if you can rate all the movies by considering preferences. Thank you!
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>        
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Please rank all the movies.</h4>
+      </div>
+      <div class="modal-body">
+        We would appreciate if you can rank all the movies by considering your preferences. Thank you!
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>        

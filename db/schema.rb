@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160401205944) do
+ActiveRecord::Schema.define(version: 20160625143747) do
 
   create_table "codes", force: :cascade do |t|
     t.text     "session_id", limit: 65535
@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(version: 20160401205944) do
     t.text     "preference", limit: 65535
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
+    t.string   "type",       limit: 255
   end
 
   create_table "ratings", force: :cascade do |t|
