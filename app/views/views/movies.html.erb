@@ -32,11 +32,15 @@ $( document ).ready(function() {
     fetch_imdb_info_for_tobe_rated();
 
     $(".stars").each(function(index){
-    	$(this).rating('create',{limit:7});	
+    	$(this).rating('create',{limit:5});	
     });
 
-    $("#movies_button").click(function() {    	
-    	var url = '<%= preferences_path%>';
+    $("#movies_button").click(function() {
+    	<%if @action_id == 2%>	
+    		var url = '<%= thank_you_path%>';
+    	<%else%>
+    		var url = '<%= post_preferences_path%>';
+    	<%end%>
     	jsonObj = [];
     	missing_answer = false;
 		var form = $('<form action="' + url + '" method="post">' + '</form>');
@@ -85,7 +89,7 @@ $( document ).ready(function() {
 
 <%if true%>
 	<div class="alert alert-dismissible alert-success" style="font-size: 20px;">
-		4. Please rate the following movies by considering which one you would prefer to watch right now on a scale from 1 to 7 stars.
+		<%=@action_id%>. Please rate the following movies on a scale from 1 to 5 stars. Go through the plot and the genre of the movie to understand what it is about.
 	</div>
 	
 	<%@movies.each do |movie|%>
@@ -118,7 +122,7 @@ $( document ).ready(function() {
 	</div>
 	<%end%>	
 	<div class="row" style="margin-top:10px;">
-	 	<button class="btn btn-primary btn-lg pull-right" id="movies_button" style="width: 100%;">Next</button>
+		<button class="btn btn-primary btn-lg pull-right" id="movies_button" style="width: 100%;">Next</button>		
 	</div>
 <%end%>
 

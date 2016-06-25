@@ -5,9 +5,11 @@ Rails.application.routes.draw do
 
   get '/', to: 'views#introduction', as: 'index'
   get '/story', to: 'views#story', as: 'story'
-  post '/movies', to: 'views#movies', as: 'movies'
+  post '/movies', to: 'views#movies', as: 'post_movies'
+  get '/movies', to: 'views#movies', as: 'get_movies'
   post '/story_description', to: 'views#story_description', as: 'story_description'  
-  post '/preferences', to: 'views#preferences', as: 'preferences'
+  post '/preferences', to: 'views#preferences', as: 'post_preferences'
+  get '/preferences', to: 'views#preferences', as: 'get_preferences'
   post '/thank_you', to: 'views#thank_you', as: 'thank_you'
   
 

@@ -1,9 +1,9 @@
 Movie.create!([
-  {title: nil, description: nil, url: nil, imdb_id: "tt0075860"},
-  {title: nil, description: nil, url: nil, imdb_id: "tt0129387"},
-  {title: nil, description: nil, url: nil, imdb_id: "tt1397086"},
-  {title: nil, description: nil, url: nil, imdb_id: "tt1568346"},
-  {title: nil, description: nil, url: nil, imdb_id: "tt1033467"}
+  {title: nil, description: nil, url: nil, imdb_id: "tt1119646"},
+  {title: nil, description: nil, url: nil, imdb_id: "tt0133093"},
+  {title: nil, description: nil, url: nil, imdb_id: "tt0120737"},
+  {title: nil, description: nil, url: nil, imdb_id: "tt0120338"},
+  {title: nil, description: nil, url: nil, imdb_id: "tt0114369"}
 ])
 Story.create!([
   {title: "$200 Bucks It Is...", description: "A guy goes over to his friend's house, rings the bell, and the wife\r\nanswers.\r\n<BR><BR>\r\n\" Hi, is Tony home?\"\r\n<p>\r\n\" No, he went to the store.\"\r\n<p>\r\n\"Well, you mind if I wait?\"\r\n<p>\r\n\" No, come in.\"\r\n<p>\r\nThey sit down and the friend says \"You know Nora, you have the\r\ngreatest breasts I have ever seen. I'd give you a hundred bucks if I\r\ncould just see one.\"\r\n<p>\r\nNora thinks about this for a second and figures what the hell - a\r\nhundred bucks. She opens her robe and shows one. He promptly thanks her and\r\nthrows a hundred bucks on the table.\r\n<p>\r\nThey sit there a while longer and Chris says\r\n\"They are so beautiful I've got to see the both of them. I'll give you\r\nanother hundred bucks if I could just see the both of them together.\"\r\n<p>\r\nNora thinks about this and thinks what the hell, opens her robe, and\r\ngives Chris a nice long look. Chris thanks her, throws another hundred\r\nbucks on the table, and then says he can't wait any longer and\r\nleaves.\r\n<p>\r\nA while later Tony arrives home and his wife says \"You know, your\r\nweird friend Chris came over. \"\r\n<p>\r\nTony thinks about this for a second and says \"Well did he drop off the\r\n200 bucks he owes me?\"\r\n<p>"},

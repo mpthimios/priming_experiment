@@ -1,95 +1,166 @@
-
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <script>
 var one_true = false;
-$( document ).ready(function() {   
+
+$.fn.randomize = function(selector){
+    var $elems = selector ? $(this).find(selector) : $(this).children(),
+        $parents = $elems.parent();
+
+    $parents.each(function(){
+        $(this).children(selector).sort(function(){
+            return Math.round(Math.random()) - 0.5;
+        // }). remove().appendTo(this); // 2014-05-24: Removed `random` but leaving for reference. See notes under 'ANOTHER EDIT'
+        }).detach().appendTo(this);
+    });
+
+    return this;
+};
+
+$( document ).ready(function() {  
+
+  $('#sortable1').randomize();
+
+  $(".draggable").draggable({
+          appendTo: "body",
+          helper: "clone"
+      });
+      
+      $("#sortable2").droppable({
+            activeClass: "ui-state-default",
+            hoverClass: "ui-state-hover",
+            accept: ":not(.ui-sortable-helper)",
+            drop: function( event, ui ) {
+                $( this ).find( ".placeholder" ).hide();
+                $(ui.draggable).clone().appendTo(this);                
+                $(ui.draggable).remove(); //remove from list
+            }
+        }).sortable({
+            items: "li:not(.placeholder)",
+            sort: function() {
+                $( this ).removeClass( "ui-state-default" );
+            }
+        });
  	$("#preferences_button").click(function() {   	 	
- 		one_true = false;
- 		$(".checkbox" ).each(function( index, element ) { 	 			
-    		checkbox_value = $(element).find("#checkbox").is(":checked");		        
-    		if (checkbox_value){
-    			one_true = true;
-    		}
-    	});
-    	if (one_true){
+ 		all_selected = false;
+ 		if ($('#sortable2 li').length == 6)
+ 		{
+    		all_selected = true;    		
+    	}
+    	if (all_selected){
     		console.log("going to submit form");
     		$("#preferences_form")[0].submit();
     	}
     	else{
+    		console.log("not all selected");
     		$('#myModal').modal('show');
     	}
 	});	
 });
 </script>
 
+<style>
+  .handpointer {
+ 		cursor: hand; 
+ 		cursor: pointer;
+ 	}
+  .left, .right{  
+    width:400px;    
+  } 
+  .list-item{
+    border: 1px solid black;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    background:#fff;    
+    height:40px;
+    line-height:40px;
+    font-size:15px;
+    font-weight:700;
+    list-style-type:none; 
+    background:#eee;
+    padding:5px;
+    cursor:pointer;
+    margin-bottom:5px;
+    position:relative;   
+  } 
+  .list-item span{  
+    padding:0 10px;
+    background:#ee2e24;
+    display:block;    
+    height:40px;
+    line-height:40px;  
+  }
+  .right .list-item{
+    height:40px;
+    line-height:40px;
+    background:#fff;
+    cursor:inherit;    
+  } 
+  .right .list-item span{
+    background:#fff;
+    color:#ee2e24;    
+    height:40px;
+    line-height:60px;    
+  }
+  .placeholder{
+    background:none;
+    color:#888;
+    cursor:default;
+    margin-bottom:0 !important;
+    text-align:center;
+    border:1px solid #ccc !important;
+  }
+  </style>
+
 <div class="alert alert-dismissible alert-success" style="font-size: 20px;">
-	5. Please tell us what kind of movies do you like to watch in general? (check all that apply)
+  <%= @action_id%>. Please tell us what kind of movies do you like to watch in general? (check all that apply)
 </div>
 
-<div class="jumbotron">
-	<form role="form" id="preferences_form" action="<%=thank_you_path%>" method="post">
-		<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-		<div class="form-group">
-		    <div class="checkbox" style="font-size: 12px;">
-		    	<label style="font-size: 20px;">
-		        	<input type="checkbox" id="checkbox" name="genre[Commedy]" style="transform:scale(1.6, 1.6); margin: 8px 0 0 -16px;" required>
-		        	Commedy
-		    	</label>		      
-		    </div>
-		</div>		  
-		<div class="form-group">
-		    <div class="checkbox" style="font-size: 12px;">
-		    	<label style="font-size: 20px;">
-		        	<input type="checkbox" id="checkbox" name="genre[DramaReality]" style="transform:scale(1.6, 1.6); margin: 8px 0 0 -16px;" required>
-		        	Drama / Reality
-		    	</label>		      
-		    </div>
+<div style="height: 100px;" class="row">
+	<p class="col-md-10">( Drag genres from the <strong>list of Available Genres</strong> to the <strong>Preferences</strong>. )</p>
+</div>
+<div style="height: 100px;" class="row">	
+  <%if @action_id == 2%>
+   <form role="form" id="preferences_form" action="<%=thank_you_path%>" method="post">
+  <%else%>
+    <form role="form" id="preferences_form" action="<%=post_movies_path%>" method="post">
+  <%end%>	
+		<%= hidden_field_tag :authenticity_token, form_authenticity_token %>		
+		<div style="border=1px solid; display: inline-block" class="col-md-1">
 		</div>
-		<div class="form-group">
-		    <div class="checkbox" style="font-size: 12px;">
-		    	<label style="font-size: 20px;">
-		        	<input type="checkbox" id="checkbox" name="genre[Mystery]" style="transform:scale(1.6, 1.6); margin: 8px 0 0 -16px;" required>
-		        	Mystery
-		    	</label>		      
-		    </div>
+		<div class="col-md-5 left">
+      <div class="list-group-item active">Available Genres</div>
+			<ul id="sortable1" class="list-group">				
+			  	<li class="ui-state-default list-item handpointer draggable">Comedy<input type='hidden' name='preferences[]' value='Comedy'/></li>
+			  	<li class="ui-state-default list-item handpointer draggable">Adventure<input type='hidden' name='preferences[]' value='Adventure'/></li>
+			  	<li class="ui-state-default list-item handpointer draggable">Action<input type='hidden' name='preferences[]' value='Action'/></li>
+			  	<li class="ui-state-default list-item handpointer draggable">Drama<input type='hidden' name='preferences[]' value='Drama'/></li>
+			  	<li class="ui-state-default list-item handpointer draggable">Thriller<input type='hidden' name='preferences[]' value='Thriller'/></li>
+			</ul>
 		</div>
-		<div class="form-group">
-		    <div class="checkbox" style="font-size: 12px;">
-		    	<label style="font-size: 20px;">
-		        	<input type="checkbox" id="checkbox" name="genre[ScienceFiction]" style="transform:scale(1.6, 1.6); margin: 8px 0 0 -16px;" required>
-		        	Science Fiction
-		    	</label>		      
-		    </div>
-		</div>
-		<div class="form-group">
-		    <div class="checkbox" style="font-size: 12px;">
-		    	<label style="font-size: 20px;">
-		        	<input type="checkbox" id="checkbox" name="genre[BiographyDocumentary]" style="transform:scale(1.6, 1.6); margin: 8px 0 0 -16px;" required>
-		        	Biography / Documentary
-		    	</label>		      
-		    </div>
-		</div>
-		<div class="form-group">
-		    <div class="checkbox" style="font-size: 12px;">
-		    	<label style="font-size: 20px;">
-		        	<input type="checkbox" id="checkbox" name="ActionAdventure" style="transform:scale(1.6, 1.6); margin: 8px 0 0 -16px;" required>
-		        	Action / Adventure
-		    	</label>		      
-		    </div>
+		<div style="border=1px solid; display: inline-block; height:270px;" class="col-md-5 right">
+      <div class="list-group-item active">Your preferences</div>
+			<ul id="sortable2" class="list-group">			  
+        <li class="list-item placeholder">(drag here in your prefered order)</li>
+			</ul>
 		</div>
 	</form>
 </div>
-
-<button id="preferences_button" class="btn btn-primary btn-lg pull-right" style="width: 100%;" href="<%= thank_you_path%>">Finish</button>
-
+<div>
+  <%if @action_id == 2%>
+	 <button id="preferences_button" class="btn btn-primary btn-lg pull-right" style="width: 100%;" href="<%= thank_you_path%>">Next</button>
+  <%else%>
+    <button id="preferences_button" class="btn btn-primary btn-lg pull-right" style="width: 100%;" href="<%= post_movies_path%>">Next</button>
+  <%end%>
+</div>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Please select at least one genre.</h4>
+        <h4 class="modal-title" id="myModalLabel">Please select all genres.</h4>
       </div>
       <div class="modal-body">
-        Even if you cannot find the movie genres you like please select at least one that is more close to your preferences. Thank you!
+        Please rank all the genres according to your preferences. Thank you!
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>        
