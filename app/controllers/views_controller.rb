@@ -5,16 +5,19 @@ class ViewsController < ApplicationController
   end
 
   def story
-    count = Count.first
+    count = Count.order('created_at DESC').first
     if count.nil?
       count = Count.new
       count.count = 0
+      count.session_id = session.id
       count.save
     else
-      count.count = count.count+1
-      count.save
+      new_count = Count.new
+      new_count.count = count.count+1
+      new_count.session_id = session.id
+      new_count.save      
     end
-    action = count.count % 2
+    action = new_count.count % 2
     logger.debug action
     if action ==1 
       redirect_to get_preferences_path

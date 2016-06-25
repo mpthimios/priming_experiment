@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160625143747) do
+ActiveRecord::Schema.define(version: 20160625152747) do
 
   create_table "codes", force: :cascade do |t|
     t.text     "session_id", limit: 65535
@@ -22,8 +22,9 @@ ActiveRecord::Schema.define(version: 20160625143747) do
 
   create_table "counts", force: :cascade do |t|
     t.integer  "count",      limit: 4
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+    t.string   "session_id", limit: 255
   end
 
   create_table "movies", force: :cascade do |t|
@@ -36,11 +37,11 @@ ActiveRecord::Schema.define(version: 20160625143747) do
   end
 
   create_table "preferences", force: :cascade do |t|
-    t.text     "session_id", limit: 65535
-    t.text     "preference", limit: 65535
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.string   "type",       limit: 255
+    t.text     "session_id",      limit: 65535
+    t.text     "preference",      limit: 65535
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.string   "preference_type", limit: 255
   end
 
   create_table "ratings", force: :cascade do |t|
